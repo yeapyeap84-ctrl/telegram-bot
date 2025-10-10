@@ -1,0 +1,3 @@
+# Скопируйте этот файл в .env и заполните ваши данные
+BOT_TOKEN=7647122248:AAG49utA8oAhwPgjUbH2qTcNiT1Akh6JdtI
+
