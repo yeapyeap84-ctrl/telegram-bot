@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Простое тестирование интерактивного бота
+Финальное тестирование интерактивного бота
 """
 
 import asyncio
@@ -26,20 +26,39 @@ async def test_bot_connection():
         print(f"ERROR: Ошибка подключения: {e}")
         return False
 
-async def test_templates():
-    """Тестирование шаблонов постов"""
-    print("\nТестирование шаблонов постов...")
+async def test_post_functionality():
+    """Тестирование функциональности отправки постов"""
+    print("\nТестирование отправки постов...")
     
     try:
-        print("Доступные шаблоны:")
-        for time_key, template in POST_TEMPLATES.items():
-            print(f"  {time_key}: {template['text']}")
+        bot = InteractiveBot(BOT_TOKEN)
         
-        print(f"\nРасписание: {len(POST_TEMPLATES)} шаблонов")
-        return True
+        # Тестовое сообщение без эмодзи
+        test_message = "Тестовое сообщение от интерактивного бота"
         
+        print(f"Отправляем тестовое сообщение в {len(CHANNELS)} каналов...")
+        print(f"Текст: {test_message}")
+        
+        # Отправляем во все каналы
+        results = await bot.publisher.publish_to_all_channels(test_message)
+        
+        # Подсчитываем результаты
+        successful = sum(1 for success in results.values() if success)
+        failed = len(results) - successful
+        
+        print(f"\nРезультаты:")
+        print(f"Успешно: {successful}")
+        print(f"Ошибки: {failed}")
+        
+        if successful > 0:
+            print("Тест прошел успешно!")
+            return True
+        else:
+            print("Все отправки завершились ошибкой")
+            return False
+            
     except Exception as e:
-        print(f"ERROR: Ошибка при тестировании шаблонов: {e}")
+        print(f"ERROR: Ошибка при тестировании: {e}")
         return False
 
 async def main():
@@ -50,8 +69,10 @@ async def main():
     # Тест 1: Подключение к боту
     connection_ok = await test_bot_connection()
     
-    # Тест 2: Шаблоны постов
-    templates_ok = await test_templates()
+    # Тест 2: Отправка постов (только если подключение успешно)
+    posts_ok = False
+    if connection_ok:
+        posts_ok = await test_post_functionality()
     
     print("\n" + "=" * 50)
     print("ИТОГИ ТЕСТИРОВАНИЯ")
@@ -62,10 +83,10 @@ async def main():
     else:
         print("ERROR: Подключение к боту")
     
-    if templates_ok:
-        print("OK: Шаблоны постов")
+    if posts_ok:
+        print("OK: Отправка постов")
     else:
-        print("ERROR: Шаблоны постов")
+        print("ERROR: Отправка постов")
     
     print("\nКоманды для использования в боте:")
     print("/start - Начать работу с ботом")
@@ -74,7 +95,7 @@ async def main():
     print("/status - Проверить статус бота")
     print("/help - Показать справку")
     
-    if connection_ok and templates_ok:
+    if connection_ok and posts_ok:
         print("\nИнтерактивный бот готов к работе!")
         print("Запустите: py start_interactive_bot.py")
     else:
