@@ -1,0 +1,7 @@
+# Версия для Render.com с совместимостью
+python-telegram-bot==13.15
+schedule==1.2.0
+pytz==2023.3
+python-dotenv==1.0.0
+flask==3.0.0
+gunicorn==21.2.0
